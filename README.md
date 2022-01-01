@@ -7,6 +7,7 @@
 # 成果展示
 <img width="766" alt="image" src="https://user-images.githubusercontent.com/91379790/147847662-0bbbb76f-fa1d-4978-9201-c88b38608007.png">
 # 整体结构
+
 -main.py 程序运行主体
 
 -color.py 海水，天空的颜色
