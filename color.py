@@ -7,8 +7,7 @@ resx = 1024
 resy = 512
 EPSILON_NUM = 0.1 / resx
 NUM_StEPS = 8
-# 迭代次数
-ITER_GEOMETRY = 4    
+ITER_GEOMETRY = 4
 ITER_FRAGMENT = 8
 SEA_HEIGHT = 0.6
 SEA_CHOPPY = 4.0
@@ -17,9 +16,6 @@ SEA_FREQ = 0.16
 
 octave_m = ti.Matrix([[1.6, 1.2],[-1.2, 1.6]])
 
-def SEA_TIME():
-    t = time.localtime()
-    return 1.0 + t.tm_sec*SEA_SPEED  
 
 # setting sky color
 @ti.func
@@ -39,15 +35,15 @@ def sea_octave(uv, choppy):
     return pow(1.0-pow(wv.x*wv.y,0.65), choppy)
 
 @ti.func
-def map(p):
+def map(p,t):
     freq = SEA_FREQ
     amp = SEA_HEIGHT
     choppy = SEA_CHOPPY
     uv = ti.Vector([0.75*p.x, p.z])
     d,h = 0.0, 0.0
     for i in range(ITER_GEOMETRY):
-        d = sea_octave((uv+ti.Vector([SEA_TIME(),SEA_TIME()]))*freq, choppy)
-        d += sea_octave((uv-ti.Vector([SEA_TIME(),SEA_TIME()]))*freq, choppy)
+        d = sea_octave((uv+ti.Vector([t,t]))*freq, choppy)
+        d += sea_octave((uv-ti.Vector([t,t]))*freq, choppy)
         h += d * amp
         uv = octave_m @ uv
         freq *= 1.9
@@ -56,15 +52,15 @@ def map(p):
     return p.y - h
 
 @ti.func
-def map_detailed(p):
+def map_detailed(p, t):
     freq = SEA_FREQ
     amp = SEA_HEIGHT
     choppy = SEA_CHOPPY
     uv = ti.Vector([0.75*p.x, p.z])
     d,h = 0.0, 0.0
     for i in range(ITER_FRAGMENT):
-        d = sea_octave((uv+ti.Vector([SEA_TIME(),SEA_TIME()]))*freq, choppy)
-        d += sea_octave((uv-ti.Vector([SEA_TIME(),SEA_TIME()]))*freq, choppy)
+        d = sea_octave((uv+ti.Vector([t, t]))*freq, choppy)
+        d += sea_octave((uv-ti.Vector([t, t]))*freq, choppy)
         h += d * amp
         uv = octave_m @ uv
         freq *= 1.9
@@ -90,26 +86,26 @@ def getSeaColor(p, n, l, eye, dist):
     return color
 
 @ti.func
-def getNormal(p, eps):
-    y = map_detailed(p)
-    x = map_detailed(ti.Vector([p.x+eps,p.y,p.z])) - y
-    z = map_detailed(ti.Vector([p.x,p.y,p.z+eps])) - y
+def getNormal(p, eps, t):
+    y = map_detailed(p, t)
+    x = map_detailed(ti.Vector([p.x+eps,p.y,p.z]), t) - y
+    z = map_detailed(ti.Vector([p.x,p.y,p.z+eps]), t) - y
     y = eps
     return ti.Vector([x, y, z]).normalized()
 
 @ti.func
-def heightMapTracing(ori, dir, p):
+def heightMapTracing(ori, dir, p, t):
     tm = 0.0
     tx = 1000.0
-    hx = map(ori + dir * tx)
+    hx = map(ori + dir * tx, t)
     if hx > 0.0:
         p = ori + dir * tx
-    hm = map(ori + dir * tm)
+    hm = map(ori + dir * tm, t)
     tmid = 0.0
     for i in range(NUM_StEPS):
         tmid = lerp(tm, tx, hm/(hm-hx))
         p = ori + dir * tmid
-        hmid = map(p)
+        hmid = map(p, t)
         if hmid < 0.0:
             tx = tmid
             hx = hmid
@@ -134,9 +130,9 @@ def getPixel(i:ti.i32, j:ti.i32, time:ti.f32) -> ti.template():
 
     # tracing
     p = ti.Vector([0.0, 0.0, 0.0])
-    p = heightMapTracing(ori, dir, p)
+    p = heightMapTracing(ori, dir, p, time)
     dist = p - ori
-    n = getNormal(p, dist.dot(dist)*EPSILON_NUM)
+    n = getNormal(p, dist.dot(dist)*EPSILON_NUM, time)
     light = ti.Vector([0.0, 1.0, 0.8]).normalized()
 
     # color
