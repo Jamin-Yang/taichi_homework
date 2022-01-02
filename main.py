@@ -13,11 +13,11 @@ def draw(t:ti.f32):
      for i,j in color:
         color[i, j] = getPixel(i, j, t)
 
-while gui.running:
-    for i in range(10000):
-        t = i * 0.003
-        draw(t)
+
+for i in range(10000):
+    t = i * 0.003
+    draw(t)
     
-        gui.set_image(color.to_numpy())
-        gui.show()
+    gui.set_image(color.to_numpy())
+    gui.show()
 
