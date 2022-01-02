@@ -7,7 +7,8 @@ resx = 1024
 resy = 512
 EPSILON_NUM = 0.1 / resx
 NUM_StEPS = 8
-ITER_GEOMETRY = 4
+# 迭代次数
+ITER_GEOMETRY = 4    
 ITER_FRAGMENT = 8
 SEA_HEIGHT = 0.6
 SEA_CHOPPY = 4.0
