@@ -112,7 +112,7 @@ def heightMapTracing(ori, dir, p, t):
         else:
             hm = tmid
             hx = hmid
-        return p
+    return p
 
 @ti.func
 def getPixel(i:ti.i32, j:ti.i32, time:ti.f32) -> ti.template():
