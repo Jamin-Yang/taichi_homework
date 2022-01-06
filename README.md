@@ -5,7 +5,8 @@
 网址 https://www.shadertoy.com/view/Ms2SD1
 
 # 成果展示
-<img width="766" alt="image" src="https://user-images.githubusercontent.com/91379790/147847662-0bbbb76f-fa1d-4978-9201-c88b38608007.png">
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/91379790/148377586-5947b384-c5f9-4f61-b2ba-cfb799292d18.gif)
+
 # 整体结构
 
 -main.py 程序运行主体
