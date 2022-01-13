@@ -14,7 +14,7 @@
 
 1.生成天空淡蓝色的背景(getSkyColor)
 
-2.生成海水表面的细节，使用伪随机数的生成方法(map,octave，noise)
+2.生成海水表面的细节，使用伪随机数的生成方法(map,octave,noise)
 
 3.生成海洋的颜色，颜色由三部分组成，海水基底+海水折射+海水反射(+高光)(getSeaColor)
 
@@ -35,5 +35,7 @@
 
 # 运行环境和运行方式
 [Taichi] version 0.8.3
+
 win, python 3.9.9
+
 python3 main.py
