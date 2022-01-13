@@ -12,16 +12,20 @@
 
 基本思路：
 
-1.生成天空淡蓝色的背景(getSkyColor)
+1.生成天空淡蓝色的背景
+根据视线点的高度来决定天空的颜色(getSkyColor)
 
-2.生成海水表面的细节，使用伪随机数的生成方法(map,octave,noise)
+2.生成海水表面的细节，使用伪随机数的生成方法
+设定水平面的高度为0.6，使用伪随机数的方法生成波浪。首先根据坐标，使用octave函数生成一个'随机'高度，随机高度类似于perlin noise生成的高度图(noise)，类似条带状连续，以模仿实际波浪的形状。
+接着使用map函数生成全局的波浪高度。
 
 3.生成海洋的颜色，颜色由三部分组成，海水基底+海水折射+海水反射(+高光)(getSeaColor)
+使用ray tracing的方法来渲染颜色。根据taichi课上讲述的方法类似，进行了漫反射和镜面反射两个过程。
 
 4.海洋的颜色和天空的颜色混合(lerp)
 
 5.加入视角的改变，即欧拉视角变换(fromEuler)
-
+使用欧拉变换矩阵，进行视角的变换。实现原理参考 https://en.wikipedia.org/wiki/Euler_angles#Rotation_matrix 中的Tait–Bryan angles的Z1X2Y3变换
 
 # 整体结构
 
